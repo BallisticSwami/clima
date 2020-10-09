@@ -39,3 +39,7 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+
+# My Ignores
+lib\utilities\secrets.dart
