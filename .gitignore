@@ -42,4 +42,4 @@ app.*.map.json
 
 
 # My Ignores
-lib\utilities\secrets.dart
+lib/utilities/secrets.dart
