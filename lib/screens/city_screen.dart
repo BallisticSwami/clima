@@ -88,6 +88,8 @@ class _CityScreenState extends State<CityScreen> {
               Container(
                 padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 5),
                 child: TextField(
+                  enableSuggestions: true,
+                  autofocus: true,
                     controller: _controller,
                     style: TextStyle(color: Colors.black87),
                     decoration: kTextFieldInputDecoration(),
