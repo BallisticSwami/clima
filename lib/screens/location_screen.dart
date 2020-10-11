@@ -1,15 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
+import 'package:clima/services/weather.dart';
+import 'package:clima/utilities/sizeconfig.dart';
+import 'city_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LocationScreen extends StatefulWidget {
+  LocationScreen({this.locationWeather});
+
+  final locationWeather;
+
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
-class _LocationScreenState extends State<LocationScreen> {
+class _LocationScreenState extends State<LocationScreen> with TickerProviderStateMixin{
+  WeatherModel weatherModel = WeatherModel();
+  int temperature;
+  String weatherIcon;
+  String cityName;
+  String weatherMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI(widget.locationWeather);
+  }
+
+  void updateUI(dynamic weatherData) {
+    if (weatherData == null) {
+      temperature = 0;
+      weatherIcon = 'Error';
+      weatherMessage = 'Unable to get weather data';
+      cityName = 'city';
+      return;
+    }
+    temperature = weatherData['main']['temp'].toInt();
+    var condition = weatherData['weather'][0]['id'];
+    weatherIcon = weatherModel.getWeatherIcon(condition);
+
+    cityName = weatherData['name'];
+    weatherMessage = weatherModel.getMessage(temperature);
+  }
+
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+    MyTheme().initBlock(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -25,44 +64,127 @@ class _LocationScreenState extends State<LocationScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  FlatButton(
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.near_me,
-                      size: 50.0,
+              Container(
+                margin: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Tooltip(
+                      message: 'Reset Location',
+                      textStyle: TextStyle(color: Colors.white),
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: FlatButton(
+                        shape: StadiumBorder(),
+                        splashColor: Colors.white10,
+                        highlightColor: Colors.white10,
+                        onPressed: () async {
+                          showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    content: SpinKitDoubleBounce(
+                                      controller: AnimationController(
+                                          vsync: this,
+                                          duration:
+                                              Duration(milliseconds: 1000)),
+                                      duration: Duration(seconds: 10),
+                                      color: Colors.white60,
+                                      size: 100,
+                                    ),
+                                  );
+                                });
+                          var weatherData =
+                              await weatherModel.getLocationWeather();
+                          updateUI(weatherData);
+                          setState(() {});
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.near_me,
+                          size: SizeConfig.safeBlockHorizontal * 11,
+                        ),
+                      ),
                     ),
-                  ),
-                  FlatButton(
-                    onPressed: () {},
-                    child: Icon(
-                      Icons.location_city,
-                      size: 50.0,
+                    Tooltip(
+                      message: 'Choose Location',
+                      textStyle: TextStyle(color: Colors.white),
+                      decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(30)),
+                      child: FlatButton(
+                        shape: StadiumBorder(),
+                        splashColor: Colors.white10,
+                        highlightColor: Colors.white10,
+                        onPressed: () async {
+                          var typedName = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CityScreen();
+                              },
+                            ),
+                          );
+                          if (typedName != null) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    content: SpinKitDoubleBounce(
+                                      controller: AnimationController(
+                                          vsync: this,
+                                          duration:
+                                              Duration(milliseconds: 1000)),
+                                      duration: Duration(seconds: 10),
+                                      color: Colors.white60,
+                                      size: 100,
+                                    ),
+                                  );
+                                });
+                            var weatherData =
+                                await weatherModel.getCityWeather(typedName);
+                            print(weatherData);
+                            setState(() {
+                              updateUI(weatherData);
+                            });
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Icon(
+                          Icons.location_city,
+                          size: SizeConfig.safeBlockHorizontal * 11,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 15.0),
+                padding:
+                    EdgeInsets.only(left: SizeConfig.safeBlockHorizontal * 4),
                 child: Row(
                   children: <Widget>[
                     Text(
-                      '32°',
+                      '$temperature°',
                       style: MyTheme.kTempTextStyle,
                     ),
                     Text(
-                      '☀️',
+                      weatherIcon,
                       style: MyTheme.kConditionTextStyle,
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: 15.0),
+                padding:
+                    EdgeInsets.only(right: SizeConfig.safeBlockHorizontal * 4),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+                  '$weatherMessage in $cityName',
                   textAlign: TextAlign.right,
                   style: MyTheme.kMessageTextStyle,
                 ),

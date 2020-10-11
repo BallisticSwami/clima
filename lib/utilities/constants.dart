@@ -13,12 +13,12 @@ class MyTheme {
 
   static TextStyle kTempTextStyle = TextStyle(
     fontFamily: 'Spartan MB',
-    fontSize: 100.0,
+    fontSize: themeblockhz * 24,
   );
 
   static TextStyle kMessageTextStyle = TextStyle(
     fontFamily: 'Spartan MB',
-    fontSize: 60.0,
+    fontSize: themeblockhz * 14,
   );
 
   static TextStyle kButtonTextStyle = TextStyle(
@@ -27,6 +27,8 @@ class MyTheme {
   );
 
   static TextStyle kConditionTextStyle = TextStyle(
-    fontSize: 100.0,
+    fontSize: themeblockhz * 24,
+    fontWeight: FontWeight.bold,
   );
+
 }
