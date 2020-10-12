@@ -30,6 +30,9 @@ flutter:
 
   assets:
   - images/
+  - images/weather_icons_i8/
+  - images/weather_icons_octarine/
+  - images/weather_images/
 
   fonts:
   - family: Spartan MB

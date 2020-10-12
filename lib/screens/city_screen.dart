@@ -48,8 +48,10 @@ class _CityScreenState extends State<CityScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/city_background.jpg'),
+            image: AssetImage('images/city_bg.jpg'),
             fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.35), BlendMode.multiply),
           ),
         ),
         constraints: BoxConstraints.expand(),
@@ -88,18 +90,17 @@ class _CityScreenState extends State<CityScreen> {
               Container(
                 padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 5),
                 child: TextField(
-                  enableSuggestions: true,
-                  autofocus: true,
+                    enableSuggestions: true,
+                    autofocus: true,
                     controller: _controller,
                     style: TextStyle(color: Colors.black87),
                     decoration: kTextFieldInputDecoration(),
                     onChanged: (value) {
                       setState(() {
                         cityNameInput = value;
-                        if(cityNameInput == '') {
+                        if (cityNameInput == '') {
                           enableClear = false;
-                        }
-                        else{
+                        } else {
                           enableClear = true;
                         }
                       });

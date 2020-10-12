@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:clima/services/weather.dart';
@@ -23,6 +24,7 @@ class _LocationScreenState extends State<LocationScreen>
   String cityName;
   String weatherMessage;
   String countryName;
+  String bgImage;
 
   @override
   void initState() {
@@ -37,10 +39,12 @@ class _LocationScreenState extends State<LocationScreen>
       weatherMessage = 'Unable to get weather data';
       cityName = 'city';
       countryName = 'country';
+      bgImage = 'default';
       return;
     }
     temperature = weatherData['main']['temp'].toInt();
     var condition = weatherData['weather'][0]['id'];
+    bgImage = weatherModel.getWeatherBackground(condition);
     weatherIcon = weatherModel.getWeatherIcon(condition);
 
     cityName = weatherData['name'];
@@ -60,15 +64,15 @@ class _LocationScreenState extends State<LocationScreen>
             'Press Back again to Exit',
             style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 fontSize: SizeConfig.safeBlockHorizontal*4),
           ),
-          backgroundColor: Colors.black38,
+          backgroundColor: Colors.black54,
         ),
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('images/location_background.jpg'),
+              image: AssetImage('images/weather_images/$bgImage.jpg'),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
                   Colors.white.withOpacity(0.8), BlendMode.dstATop),
@@ -168,6 +172,7 @@ class _LocationScreenState extends State<LocationScreen>
                               setState(() {
                                 updateUI(weatherData);
                               });
+                              await Future.delayed(const Duration(milliseconds: 500));
                               Navigator.pop(context);
                             }
                           },
