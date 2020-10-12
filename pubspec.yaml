@@ -19,6 +19,7 @@ dependencies:
   http: ^0.12.2
   flutter_spinkit: "^4.1.2"
   double_back_to_close_app: ^1.2.0
+  autocomplete_textfield: ^1.7.3
 
 dev_dependencies:
   flutter_test:
@@ -29,8 +30,8 @@ flutter:
   uses-material-design: true
 
   assets:
+  - assets/city_list.json
   - images/
-  - images/weather_icons_i8/
   - images/weather_icons_octarine/
   - images/weather_images/
 

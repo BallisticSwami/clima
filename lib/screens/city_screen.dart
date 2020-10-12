@@ -1,16 +1,55 @@
+import 'package:clima/services/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:clima/utilities/sizeconfig.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class CityScreen extends StatefulWidget {
   @override
   _CityScreenState createState() => _CityScreenState();
 }
 
-class _CityScreenState extends State<CityScreen> {
+class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   String cityNameInput;
   var _controller = TextEditingController();
   bool enableClear = false;
+  final _formKey = GlobalKey<AutoCompleteTextFieldState<Cities>>();
+
+  void _loadData() async {
+    print('loading data');
+    await CityModel.loadCities();
+    print('data loaded');
+  }
+
+  _showDialog() async {
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 2), () {
+                          Navigator.of(context).pop(true);
+                        });
+           return AlertDialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            content: SpinKitDoubleBounce(
+              controller: AnimationController(
+                  vsync: this, duration: Duration(milliseconds: 1000)),
+              duration: Duration(seconds: 1),
+              color: Colors.white60,
+              size: 100,
+            ),
+          );
+        });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
+    _loadData();
+    // Navigator.pop(context);
+  }
 
   InputDecoration kTextFieldInputDecoration() {
     return InputDecoration(
@@ -41,7 +80,7 @@ class _CityScreenState extends State<CityScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     SizeConfig().init(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -81,6 +120,7 @@ class _CityScreenState extends State<CityScreen> {
                       },
                       child: Icon(
                         Icons.arrow_back_ios,
+                        color: Colors.white,
                         size: SizeConfig.safeBlockHorizontal * 11,
                       ),
                     ),
@@ -89,20 +129,53 @@ class _CityScreenState extends State<CityScreen> {
               ),
               Container(
                 padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 5),
-                child: TextField(
-                    enableSuggestions: true,
-                    autofocus: true,
+                child: AutoCompleteTextField<Cities>(
+                    suggestionsAmount: 4,
                     controller: _controller,
                     style: TextStyle(color: Colors.black87),
                     decoration: kTextFieldInputDecoration(),
-                    onChanged: (value) {
+                    itemBuilder: (context, item) {
+                      return Padding(
+                        padding: EdgeInsets.all(
+                            SizeConfig.safeBlockHorizontal * 0.7),
+                        child: ListTile(
+                          tileColor: Colors.white,
+                          title: Text(
+                            item.city,
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                          trailing: Text(item.country,
+                              style: TextStyle(
+                                  color: Colors.black12,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                      );
+                    },
+                    itemSorter: (a, b) {
+                      return a.city.compareTo(b.city);
+                    },
+                    itemSubmitted: (item) {
                       setState(() {
-                        cityNameInput = value;
+                        _controller.text = item.city;
+                      });
+                    },
+                    key: _formKey,
+                    suggestions: CityModel.cities,
+                    itemFilter: (item, query) {
+                      return item.city
+                          .toLowerCase()
+                          .startsWith(query.toLowerCase());
+                    },
+                    clearOnSubmit: false,
+                    textChanged: (value) {
+                      setState(() {
+                        cityNameInput = value.toLowerCase();
                         if (cityNameInput == '') {
                           enableClear = false;
                         } else {
                           enableClear = true;
                         }
+                        print(enableClear);
                       });
                     }),
               ),

@@ -1,7 +1,6 @@
 import 'package:clima/services/networking.dart';
 import 'package:clima/services/location.dart';
 import 'package:clima/utilities/secrets.dart';
-import 'package:flutter/cupertino.dart';
 
 const openWeatherMapURL = 'http://api.openweathermap.org/data/2.5/weather';
 

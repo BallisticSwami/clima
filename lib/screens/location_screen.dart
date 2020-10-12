@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:clima/services/weather.dart';
@@ -126,6 +125,7 @@ class _LocationScreenState extends State<LocationScreen>
                           },
                           child: Icon(
                             Icons.near_me,
+                            color: Colors.white,
                             size: SizeConfig.safeBlockHorizontal * 11,
                           ),
                         ),
@@ -178,6 +178,7 @@ class _LocationScreenState extends State<LocationScreen>
                           },
                           child: Icon(
                             Icons.location_city,
+                            color: Colors.white,
                             size: SizeConfig.safeBlockHorizontal * 11,
                           ),
                         ),
@@ -194,10 +195,8 @@ class _LocationScreenState extends State<LocationScreen>
                         '$temperature°',
                         style: MyTheme.kTempTextStyle,
                       ),
-                      Text(
-                        weatherIcon,
-                        style: MyTheme.kConditionTextStyle,
-                      ),
+                      Image(image: AssetImage('images/weather_icons_octarine/$bgImage.png'),
+                      height: SizeConfig.safeBlockHorizontal*24,),
                     ],
                   ),
                 ),

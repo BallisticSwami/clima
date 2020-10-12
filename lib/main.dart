@@ -17,7 +17,13 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: child);
       },
-      theme: ThemeData.dark(),
+      theme: ThemeData.light().copyWith(
+        iconTheme: IconThemeData(color: Colors.white, ),
+        textTheme: TextTheme(
+          bodyText1: TextStyle(color: Colors.white),
+          bodyText2: TextStyle(color: Colors.white),
+        ),
+      ),
       home: LoadingScreen(),
     );
   }
