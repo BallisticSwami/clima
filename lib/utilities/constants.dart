@@ -23,6 +23,7 @@ class MyTheme {
 
   static TextStyle kButtonTextStyle = TextStyle(
     fontSize: 30.0,
+    color: Colors.white,
     fontFamily: 'Spartan MB',
   );
 

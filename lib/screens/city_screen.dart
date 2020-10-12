@@ -16,6 +16,7 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   bool enableClear = false;
   final _formKey = GlobalKey<AutoCompleteTextFieldState<Cities>>();
 
+
   void _loadData() async {
     print('loading data');
     await CityModel.loadCities();
@@ -26,7 +27,7 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
     return await showDialog(
         context: context,
         builder: (context) {
-          Future.delayed(Duration(seconds: 2), () {
+          Future.delayed(Duration(milliseconds: 1500), () {
                           Navigator.of(context).pop(true);
                         });
            return AlertDialog(
@@ -48,7 +49,6 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
     _loadData();
-    // Navigator.pop(context);
   }
 
   InputDecoration kTextFieldInputDecoration() {
@@ -167,9 +167,20 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
                           .startsWith(query.toLowerCase());
                     },
                     clearOnSubmit: false,
+                    onFocusChanged: (value) {
+                      setState(() {
+                        cityNameInput = _controller.text.toLowerCase();
+                        if (cityNameInput == '') {
+                          enableClear = false;
+                        } else {
+                          enableClear = true;
+                        }
+                        print(enableClear);
+                      });
+                    },
                     textChanged: (value) {
                       setState(() {
-                        cityNameInput = value.toLowerCase();
+                        cityNameInput = _controller.text.toLowerCase();
                         if (cityNameInput == '') {
                           enableClear = false;
                         } else {
@@ -181,6 +192,7 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
               ),
               FlatButton(
                 onPressed: () {
+                  print(cityNameInput);
                   Navigator.pop(context, cityNameInput);
                 },
                 child: Text(
