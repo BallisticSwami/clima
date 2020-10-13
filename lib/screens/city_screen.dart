@@ -15,14 +15,11 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   var _controller = TextEditingController();
   bool enableClear = false;
   final _formKey = GlobalKey<AutoCompleteTextFieldState<Cities>>();
-  bool isLoaded = false;
 
-  Future<dynamic> _loadData() async {
+  void _loadData() async {
     print('loading data');
     await CityModel.loadCities();
     print('data loaded');
-    isLoaded = true;
-    return true;
   }
 
   _showDialog() async {
@@ -33,18 +30,16 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
         builder: (context) {
           return WillPopScope(
             onWillPop: () async {
-                                      return false;
-                                    },
-                      child: AlertDialog(
+              return false;
+            },
+            child: AlertDialog(
               backgroundColor: Colors.transparent,
               elevation: 0,
               content: SizedBox(
                 height: SizeConfig.safeBlockHorizontal * 25,
                 child: FlareLoading(
                   name: 'assets/weather_loading_opt.flr',
-                  until: () async {
-                    _loadData();
-                  },
+                  until: () => Future.delayed(Duration(milliseconds: 1300)),
                   onSuccess: (test) {
                     Navigator.pop(context);
                   },
@@ -62,7 +57,14 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _loadData();
     WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   InputDecoration kTextFieldInputDecoration() {
@@ -189,7 +191,6 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
                         } else {
                           enableClear = true;
                         }
-                        print(enableClear);
                       });
                     },
                     textChanged: (value) {
@@ -200,7 +201,6 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
                         } else {
                           enableClear = true;
                         }
-                        print(enableClear);
                       });
                     }),
               ),

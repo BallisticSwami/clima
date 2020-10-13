@@ -26,6 +26,7 @@ class _LocationScreenState extends State<LocationScreen>
   String bgImage;
 
   bool isLoaded = false;
+  bool newLocation = false;
 
   @override
   void initState() {
@@ -102,6 +103,7 @@ class _LocationScreenState extends State<LocationScreen>
                           splashColor: Colors.white10,
                           highlightColor: Colors.white10,
                           onPressed: () async {
+                            if(newLocation == true) {
                             isLoaded = false;
                             showDialog(
                                 barrierDismissible: false,
@@ -138,7 +140,8 @@ class _LocationScreenState extends State<LocationScreen>
                             updateUI(weatherData);
                             setState(() {});
                             isLoaded = true;
-                          },
+                            newLocation = false;
+                          }},
                           child: Icon(
                             Icons.near_me,
                             color: Colors.white,
@@ -206,6 +209,7 @@ class _LocationScreenState extends State<LocationScreen>
                               await Future.delayed(
                                   const Duration(milliseconds: 500));
                               isLoaded = true;
+                              newLocation = true;
                             }
                           },
                           child: Icon(
