@@ -3,8 +3,8 @@ import 'package:clima/utilities/constants.dart';
 import 'package:clima/services/weather.dart';
 import 'package:clima/utilities/sizeconfig.dart';
 import 'city_screen.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
+import 'package:flare_loading/flare_loading.dart';
 
 class LocationScreen extends StatefulWidget {
   LocationScreen({this.locationWeather});
@@ -24,6 +24,8 @@ class _LocationScreenState extends State<LocationScreen>
   String weatherMessage;
   String countryName;
   String bgImage;
+
+  bool isLoaded = false;
 
   @override
   void initState() {
@@ -64,9 +66,9 @@ class _LocationScreenState extends State<LocationScreen>
             style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
-                fontSize: SizeConfig.safeBlockHorizontal*4),
+                fontSize: SizeConfig.safeBlockHorizontal * 4),
           ),
-          backgroundColor: Colors.black54,
+          backgroundColor: Colors.black45,
         ),
         child: Container(
           decoration: BoxDecoration(
@@ -100,20 +102,34 @@ class _LocationScreenState extends State<LocationScreen>
                           splashColor: Colors.white10,
                           highlightColor: Colors.white10,
                           onPressed: () async {
+                            isLoaded = false;
                             showDialog(
+                                barrierDismissible: false,
+                                barrierColor: MyTheme.bgColor,
                                 context: context,
                                 builder: (context) {
-                                  return AlertDialog(
-                                    backgroundColor: Colors.transparent,
-                                    elevation: 0,
-                                    content: SpinKitDoubleBounce(
-                                      controller: AnimationController(
-                                          vsync: this,
-                                          duration:
-                                              Duration(milliseconds: 1000)),
-                                      duration: Duration(seconds: 10),
-                                      color: Colors.white60,
-                                      size: 100,
+                                  return WillPopScope(
+                                    onWillPop: () async {
+                                      return false;
+                                    },
+                                    child: AlertDialog(
+                                      backgroundColor: MyTheme.bgColor,
+                                      elevation: 0,
+                                      content: SizedBox(
+                                        height:
+                                            SizeConfig.safeBlockHorizontal * 25,
+                                        child: FlareLoading(
+                                          name: 'assets/weather_loading_opt.flr',
+                                          isLoading: isLoaded,
+                                          onSuccess: (test) {
+                                            Navigator.pop(context);
+                                          },
+                                          onError: null,
+                                          startAnimation: 'Sun Rotate',
+                                          loopAnimation: 'Sun Rotate',
+                                          endAnimation: 'End Anim',
+                                        ),
+                                      ),
                                     ),
                                   );
                                 });
@@ -121,7 +137,7 @@ class _LocationScreenState extends State<LocationScreen>
                                 await weatherModel.getLocationWeather();
                             updateUI(weatherData);
                             setState(() {});
-                            Navigator.pop(context);
+                            isLoaded = true;
                           },
                           child: Icon(
                             Icons.near_me,
@@ -150,20 +166,35 @@ class _LocationScreenState extends State<LocationScreen>
                               ),
                             );
                             if (typedName != null) {
+                              isLoaded = false;
                               showDialog(
+                                  barrierColor: MyTheme.bgColor,
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: Colors.transparent,
-                                      elevation: 0,
-                                      content: SpinKitDoubleBounce(
-                                        controller: AnimationController(
-                                            vsync: this,
-                                            duration:
-                                                Duration(milliseconds: 1000)),
-                                        duration: Duration(seconds: 10),
-                                        color: Colors.white60,
-                                        size: 100,
+                                    return WillPopScope(
+                                      onWillPop: () async {
+                                      return false;
+                                    },
+                                      child: AlertDialog(
+                                        backgroundColor: Colors.transparent,
+                                        elevation: 0,
+                                        content: SizedBox(
+                                          height:
+                                              SizeConfig.safeBlockHorizontal *
+                                                  25,
+                                          child: FlareLoading(
+                                            name: 'assets/weather_loading_opt.flr',
+                                            isLoading: isLoaded,
+                                            onSuccess: (test) {
+                                              Navigator.pop(context);
+                                            },
+                                            onError: null,
+                                            startAnimation: 'Sun Rotate',
+                                            loopAnimation: 'Sun Rotate',
+                                            endAnimation: 'End Anim',
+                                          ),
+                                        ),
                                       ),
                                     );
                                   });
@@ -172,8 +203,9 @@ class _LocationScreenState extends State<LocationScreen>
                               setState(() {
                                 updateUI(weatherData);
                               });
-                              await Future.delayed(const Duration(milliseconds: 500));
-                              Navigator.pop(context);
+                              await Future.delayed(
+                                  const Duration(milliseconds: 500));
+                              isLoaded = true;
                             }
                           },
                           child: Icon(
@@ -195,14 +227,18 @@ class _LocationScreenState extends State<LocationScreen>
                         '$temperature°',
                         style: MyTheme.kTempTextStyle,
                       ),
-                      Image(image: AssetImage('images/weather_icons_octarine/$bgImage.png'),
-                      height: SizeConfig.safeBlockHorizontal*24,),
+                      Image(
+                        image: AssetImage(
+                            'images/weather_icons_octarine/$bgImage.png'),
+                        height: SizeConfig.safeBlockHorizontal * 24,
+                      ),
                     ],
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                      right: SizeConfig.safeBlockHorizontal * 4),
+                      right: SizeConfig.safeBlockHorizontal * 4,
+                      bottom: SizeConfig.safeBlockVertical * 3),
                   child: Text(
                     '$weatherMessage in $cityName, $countryName',
                     textAlign: TextAlign.right,

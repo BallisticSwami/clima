@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 import 'package:clima/utilities/sizeconfig.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flare_loading/flare_loading.dart';
 
 class CityScreen extends StatefulWidget {
   @override
@@ -15,30 +15,45 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   var _controller = TextEditingController();
   bool enableClear = false;
   final _formKey = GlobalKey<AutoCompleteTextFieldState<Cities>>();
+  bool isLoaded = false;
 
-
-  void _loadData() async {
+  Future<dynamic> _loadData() async {
     print('loading data');
     await CityModel.loadCities();
     print('data loaded');
+    isLoaded = true;
+    return true;
   }
 
   _showDialog() async {
     return await showDialog(
+        barrierDismissible: false,
+        barrierColor: MyTheme.bgColor,
         context: context,
         builder: (context) {
-          Future.delayed(Duration(milliseconds: 1500), () {
-                          Navigator.of(context).pop(true);
-                        });
-           return AlertDialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            content: SpinKitDoubleBounce(
-              controller: AnimationController(
-                  vsync: this, duration: Duration(milliseconds: 1000)),
-              duration: Duration(seconds: 1),
-              color: Colors.white60,
-              size: 100,
+          return WillPopScope(
+            onWillPop: () async {
+                                      return false;
+                                    },
+                      child: AlertDialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              content: SizedBox(
+                height: SizeConfig.safeBlockHorizontal * 25,
+                child: FlareLoading(
+                  name: 'assets/weather_loading_opt.flr',
+                  until: () async {
+                    _loadData();
+                  },
+                  onSuccess: (test) {
+                    Navigator.pop(context);
+                  },
+                  onError: null,
+                  startAnimation: 'Sun Rotate',
+                  loopAnimation: 'Sun Rotate',
+                  endAnimation: 'End Anim',
+                ),
+              ),
             ),
           );
         });
@@ -48,7 +63,6 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
-    _loadData();
   }
 
   InputDecoration kTextFieldInputDecoration() {
@@ -80,7 +94,7 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,

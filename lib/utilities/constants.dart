@@ -5,6 +5,8 @@ class MyTheme {
   static double themeblockhz;
   static double themeblockvt;
 
+  static Color bgColor = Color(0xff171029);
+
   void initBlock(BuildContext context) {
     SizeConfig().init(context);
     themeblockhz = SizeConfig.safeBlockHorizontal;
