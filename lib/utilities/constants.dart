@@ -1,4 +1,4 @@
-import 'package:clima/utilities/sizeconfig.dart';
+import 'package:Clima/utilities/sizeconfig.dart';
 import 'package:flutter/material.dart';
 
 class MyTheme {

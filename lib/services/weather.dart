@@ -1,6 +1,6 @@
-import 'package:clima/services/networking.dart';
-import 'package:clima/services/location.dart';
-import 'package:clima/utilities/secrets.dart';
+import 'package:Clima/services/networking.dart';
+import 'package:Clima/services/location.dart';
+import 'package:Clima/utilities/secrets.dart';
 
 const openWeatherMapURL = 'http://api.openweathermap.org/data/2.5/weather';
 

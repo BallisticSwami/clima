@@ -1,7 +1,7 @@
-import 'package:clima/services/suggestions.dart';
+import 'package:Clima/services/suggestions.dart';
 import 'package:flutter/material.dart';
-import 'package:clima/utilities/constants.dart';
-import 'package:clima/utilities/sizeconfig.dart';
+import 'package:Clima/utilities/constants.dart';
+import 'package:Clima/utilities/sizeconfig.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flare_loading/flare_loading.dart';
 
@@ -17,13 +17,14 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<AutoCompleteTextFieldState<Cities>>();
 
   void _loadData() async {
+    await Future.delayed(Duration(seconds: 1));
     print('loading data');
-    await CityModel.loadCities();
+    CityModel.loadCities();
     print('data loaded');
   }
 
   _showDialog() async {
-    return await showDialog(
+    await showDialog(
         barrierDismissible: false,
         barrierColor: MyTheme.bgColor,
         context: context,
@@ -56,9 +57,9 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    //WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
     super.initState();
-    _loadData();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
+    // _loadData();
   }
 
   @override

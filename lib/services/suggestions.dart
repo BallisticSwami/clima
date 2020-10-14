@@ -18,7 +18,7 @@ class Cities {
 class CityModel {
   static List<Cities> cities;
 
-  static Future loadCities() async {
+  static void loadCities() async {
     try {
       cities = List<Cities>();
       String jsonString = await rootBundle.loadString('assets/city_list.json');

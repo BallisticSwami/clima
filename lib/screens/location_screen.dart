@@ -1,7 +1,8 @@
+import 'package:Clima/services/suggestions.dart';
 import 'package:flutter/material.dart';
-import 'package:clima/utilities/constants.dart';
-import 'package:clima/services/weather.dart';
-import 'package:clima/utilities/sizeconfig.dart';
+import 'package:Clima/utilities/constants.dart';
+import 'package:Clima/services/weather.dart';
+import 'package:Clima/utilities/sizeconfig.dart';
 import 'city_screen.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flare_loading/flare_loading.dart';
@@ -32,6 +33,8 @@ class _LocationScreenState extends State<LocationScreen>
   void initState() {
     super.initState();
     updateUI(widget.locationWeather);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
+    CityModel.loadCities();
   }
 
   void updateUI(dynamic weatherData) {
@@ -54,11 +57,38 @@ class _LocationScreenState extends State<LocationScreen>
     countryName = weatherData['sys']['country'];
   }
 
+  _showDialog() async {
+    showDialog(
+        barrierDismissible: false,
+        barrierColor: MyTheme.bgColor,
+        context: context,
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async {
+              return false;
+            },
+            child: Center(
+              child: SizedBox(
+                  height: SizeConfig.safeBlockHorizontal * 9,
+                  width: SizeConfig.safeBlockHorizontal * 9,
+                  child: CircularProgressIndicator(
+                    strokeWidth: SizeConfig.safeBlockHorizontal*2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.pinkAccent.shade100),
+                  )),
+            ),
+          );
+        });
+    await Future.delayed(Duration(milliseconds: 2000));
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     MyTheme().initBlock(context);
     return Scaffold(
+      backgroundColor: MyTheme.bgColor,
       resizeToAvoidBottomInset: false,
       body: DoubleBackToCloseApp(
         snackBar: SnackBar(
@@ -77,7 +107,7 @@ class _LocationScreenState extends State<LocationScreen>
               image: AssetImage('images/weather_images/$bgImage.jpg'),
               fit: BoxFit.cover,
               colorFilter: ColorFilter.mode(
-                  Colors.white.withOpacity(0.8), BlendMode.dstATop),
+                  Colors.white.withOpacity(1), BlendMode.dstATop),
             ),
           ),
           constraints: BoxConstraints.expand(),
@@ -103,45 +133,48 @@ class _LocationScreenState extends State<LocationScreen>
                           splashColor: Colors.white10,
                           highlightColor: Colors.white10,
                           onPressed: () async {
-                            if(newLocation == true) {
-                            isLoaded = false;
-                            showDialog(
-                                barrierDismissible: false,
-                                barrierColor: MyTheme.bgColor,
-                                context: context,
-                                builder: (context) {
-                                  return WillPopScope(
-                                    onWillPop: () async {
-                                      return false;
-                                    },
-                                    child: AlertDialog(
-                                      backgroundColor: MyTheme.bgColor,
-                                      elevation: 0,
-                                      content: SizedBox(
-                                        height:
-                                            SizeConfig.safeBlockHorizontal * 25,
-                                        child: FlareLoading(
-                                          name: 'assets/weather_loading_opt.flr',
-                                          isLoading: isLoaded,
-                                          onSuccess: (test) {
-                                            Navigator.pop(context);
-                                          },
-                                          onError: null,
-                                          startAnimation: 'Sun Rotate',
-                                          loopAnimation: 'Sun Rotate',
-                                          endAnimation: 'End Anim',
+                            if (newLocation == true) {
+                              isLoaded = false;
+                              showDialog(
+                                  barrierDismissible: false,
+                                  barrierColor: MyTheme.bgColor,
+                                  context: context,
+                                  builder: (context) {
+                                    return WillPopScope(
+                                      onWillPop: () async {
+                                        return false;
+                                      },
+                                      child: AlertDialog(
+                                        backgroundColor: MyTheme.bgColor,
+                                        elevation: 0,
+                                        content: SizedBox(
+                                          height:
+                                              SizeConfig.safeBlockHorizontal *
+                                                  25,
+                                          child: FlareLoading(
+                                            name:
+                                                'assets/weather_loading_opt.flr',
+                                            isLoading: isLoaded,
+                                            onSuccess: (test) {
+                                              Navigator.pop(context);
+                                            },
+                                            onError: null,
+                                            startAnimation: 'Sun Rotate',
+                                            loopAnimation: 'Sun Rotate',
+                                            endAnimation: 'End Anim',
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                });
-                            var weatherData =
-                                await weatherModel.getLocationWeather();
-                            updateUI(weatherData);
-                            setState(() {});
-                            isLoaded = true;
-                            newLocation = false;
-                          }},
+                                    );
+                                  });
+                              var weatherData =
+                                  await weatherModel.getLocationWeather();
+                              updateUI(weatherData);
+                              setState(() {});
+                              isLoaded = true;
+                              newLocation = false;
+                            }
+                          },
                           child: Icon(
                             Icons.near_me,
                             color: Colors.white,
@@ -177,8 +210,8 @@ class _LocationScreenState extends State<LocationScreen>
                                   builder: (context) {
                                     return WillPopScope(
                                       onWillPop: () async {
-                                      return false;
-                                    },
+                                        return false;
+                                      },
                                       child: AlertDialog(
                                         backgroundColor: Colors.transparent,
                                         elevation: 0,
@@ -187,7 +220,8 @@ class _LocationScreenState extends State<LocationScreen>
                                               SizeConfig.safeBlockHorizontal *
                                                   25,
                                           child: FlareLoading(
-                                            name: 'assets/weather_loading_opt.flr',
+                                            name:
+                                                'assets/weather_loading_opt.flr',
                                             isLoading: isLoaded,
                                             onSuccess: (test) {
                                               Navigator.pop(context);
