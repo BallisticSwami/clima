@@ -1,3 +1,4 @@
+import 'package:Clima/services/suggestions.dart';
 import 'package:Clima/services/weather.dart';
 import 'package:Clima/utilities/sizeconfig.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _LoadingScreenState extends State<LoadingScreen>
   void initState() {
     super.initState();
     getLocationData();
+    CityModel.loadCities();
   }
 
   void getLocationData() async {

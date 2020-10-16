@@ -16,12 +16,11 @@ class WeatherModel {
   Future<dynamic> getLocationWeather() async {
     Location location = Location();
     await location.getCurrentLocation();
-
     NetworkHelper netHelper = NetworkHelper(
         '$openWeatherMapURL?lat=${location.latitude}&lon=${location.longitude}&appid=$apiKey&units=metric');
 
     var weatherData = await netHelper.getData();
-
+    print(weatherData);
     return weatherData;
   }
 

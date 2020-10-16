@@ -1,4 +1,3 @@
-import 'package:Clima/services/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:Clima/utilities/constants.dart';
 import 'package:Clima/services/weather.dart';
@@ -27,14 +26,13 @@ class _LocationScreenState extends State<LocationScreen>
   String bgImage;
 
   bool isLoaded = false;
-  bool newLocation = false;
 
   @override
   void initState() {
     super.initState();
     updateUI(widget.locationWeather);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
-    CityModel.loadCities();
+    // WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
+    // CityModel.loadCities();
   }
 
   void updateUI(dynamic weatherData) {
@@ -57,31 +55,6 @@ class _LocationScreenState extends State<LocationScreen>
     countryName = weatherData['sys']['country'];
   }
 
-  _showDialog() async {
-    showDialog(
-        barrierDismissible: false,
-        barrierColor: MyTheme.bgColor,
-        context: context,
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () async {
-              return false;
-            },
-            child: Center(
-              child: SizedBox(
-                  height: SizeConfig.safeBlockHorizontal * 9,
-                  width: SizeConfig.safeBlockHorizontal * 9,
-                  child: CircularProgressIndicator(
-                    strokeWidth: SizeConfig.safeBlockHorizontal*2,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.pinkAccent.shade100),
-                  )),
-            ),
-          );
-        });
-    await Future.delayed(Duration(milliseconds: 2000));
-    Navigator.pop(context);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +106,6 @@ class _LocationScreenState extends State<LocationScreen>
                           splashColor: Colors.white10,
                           highlightColor: Colors.white10,
                           onPressed: () async {
-                            if (newLocation == true) {
                               isLoaded = false;
                               showDialog(
                                   barrierDismissible: false,
@@ -143,7 +115,7 @@ class _LocationScreenState extends State<LocationScreen>
                                     return WillPopScope(
                                       onWillPop: () async {
                                         return false;
-                                      },
+                                      }  ,
                                       child: AlertDialog(
                                         backgroundColor: MyTheme.bgColor,
                                         elevation: 0,
@@ -172,9 +144,8 @@ class _LocationScreenState extends State<LocationScreen>
                               updateUI(weatherData);
                               setState(() {});
                               isLoaded = true;
-                              newLocation = false;
                             }
-                          },
+                          ,
                           child: Icon(
                             Icons.near_me,
                             color: Colors.white,
@@ -243,7 +214,6 @@ class _LocationScreenState extends State<LocationScreen>
                               await Future.delayed(
                                   const Duration(milliseconds: 500));
                               isLoaded = true;
-                              newLocation = true;
                             }
                           },
                           child: Icon(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:Clima/utilities/constants.dart';
 import 'package:Clima/utilities/sizeconfig.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:flare_loading/flare_loading.dart';
 
 class CityScreen extends StatefulWidget {
   @override
@@ -16,56 +15,9 @@ class _CityScreenState extends State<CityScreen> with TickerProviderStateMixin {
   bool enableClear = false;
   final _formKey = GlobalKey<AutoCompleteTextFieldState<Cities>>();
 
-  void _loadData() async {
-    await Future.delayed(Duration(seconds: 1));
-    print('loading data');
-    CityModel.loadCities();
-    print('data loaded');
-  }
-
-  _showDialog() async {
-    await showDialog(
-        barrierDismissible: false,
-        barrierColor: MyTheme.bgColor,
-        context: context,
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () async {
-              return false;
-            },
-            child: AlertDialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              content: SizedBox(
-                height: SizeConfig.safeBlockHorizontal * 25,
-                child: FlareLoading(
-                  name: 'assets/weather_loading_opt.flr',
-                  until: () => Future.delayed(Duration(milliseconds: 1300)),
-                  onSuccess: (test) {
-                    Navigator.pop(context);
-                  },
-                  onError: null,
-                  startAnimation: 'Sun Rotate',
-                  loopAnimation: 'Sun Rotate',
-                  endAnimation: 'End Anim',
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
   @override
   void initState() {
-    //WidgetsBinding.instance.addPostFrameCallback((_) => _showDialog());
     super.initState();
-    // _loadData();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
   }
 
   InputDecoration kTextFieldInputDecoration() {
