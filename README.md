@@ -10,8 +10,8 @@ The objective of this tutorial is to learn about asynchronous programming in Dar
 
 ## Credits
 
-⋅⋅* [Flare Animations](https://rive.app/a/shreeyans/files/flare/weather-loading-optim/preview)
-⋅⋅* [Unsplash for Backgrounds](https://unsplash.com/)
-⋅⋅* [OpenWeatherMap API](https://openweathermap.org/current)
+* [Flare Animations](https://rive.app/a/shreeyans/files/flare/weather-loading-optim/preview)
+* [Unsplash for Backgrounds](https://unsplash.com/)
+* [OpenWeatherMap API](https://openweathermap.org/current)
 
 >This is a companion project to The App Brewery's Complete Flutter Development Bootcamp, check out the full course at [www.appbrewery.co](https://www.appbrewery.co/)
